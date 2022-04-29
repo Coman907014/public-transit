@@ -6,7 +6,7 @@ import markerService from "../../util/markerService";
 import { Station } from "../../model/Station";
 import Map from "./Map";
 import timeService from "../../util/timeService";
-import TimeTableContainer from "../TimeTable/TimeTableContainer";
+import TimeTableContainer from "../timeTable/TimeTableContainer";
 import stationsService from "../../util/stationsService";
 
 interface MapContainerProps {
@@ -42,7 +42,7 @@ const MapContainer: FunctionComponent<MapContainerProps> = ({ mapLocations }) =>
         return <Map markers={markerService.stationToMarkerMapper(mapLocations)} handleOnClick={ handleOnClick }/>;
     }
   }, [mapLocations, handleOnClick]);
-
+  console.log('stationConnections?.stationboard', stationConnections?.stationboard)
   return (
     <>
       <Wrapper apiKey={process.env.REACT_APP_MAPS_API_KEY as string} render={render} />

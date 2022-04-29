@@ -35,11 +35,11 @@ const stationsService = {
     // Filter is supposed to always return a value and here we only return for specific cases
     // eslint-disable-next-line 
     return  stations.filter((el, i) => {
-      if(i>= startIndex && i<= endIndex) {
+      if(i >= startIndex && i <= endIndex) {
         return el
       }
     })
-  }
+  },
 }
 
 export default stationsService;

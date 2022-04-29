@@ -18,7 +18,7 @@ interface MapProps {
 
 const Map: FunctionComponent<MapProps> = ({ zoom = 13, center = KappeliStation, markers, handleOnClick }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<any>();
+  const [map, setMap] = useState<google.maps.Map>();
 
   useEffect(() => {
     if(!map) {
@@ -32,10 +32,31 @@ const Map: FunctionComponent<MapProps> = ({ zoom = 13, center = KappeliStation, 
 
   }, [ref, map, center, zoom]);
 
+  useEffect(() => {
+
+    if(!map || Boolean(markers.length < 1)) {
+      return;
+    }
+    
+    const firstViableMarker = markers.find(marker => marker.position.lat && marker.position.lng);
+
+    if (!firstViableMarker) {
+      return;
+    }
+
+    const { lat, lng } = firstViableMarker.position
+    // @TODO: Even though we pass numbers, we have a console error saying that lat is not a number.
+    // InvalidValueError: setPosition: not a LatLng or LatLngLiteral: in property lat: not a number
+    // Should be investigated
+    map.panTo({ lat: parseFloat(lat), lng: parseFloat(lng) })
+
+  }, [map, markers])
+
   return (
     <>
       <div ref={ref} id="map" />
       {
+        markers.length > 0 &&
         markers.map((markerOptions, index) => (
           <MapMarker
             key={ index }

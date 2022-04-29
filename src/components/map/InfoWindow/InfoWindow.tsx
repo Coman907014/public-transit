@@ -9,47 +9,51 @@ interface InfoWindowProps extends MapMarkerProps {
   marker: any;
 };
 
+var infoWindow: google.maps.InfoWindow | undefined = undefined;
 const InfoWindow: FunctionComponent<InfoWindowProps> = (options) => {
   const { isInfoWindowOpen, id, onClick, iconName, name, marker, map, onWindowClose } = options;
-  const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow>();
-
+  // const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow>();
   const InfoWindowContent = useCallback(() => (
     <InfoContainer
       id={ id }
       onClick={ onClick }
       icon={ iconName || 'bus' }
       name={ name } />
-  ), [id, onClick, name, iconName])
+  ), [options])
 
   // @TODO: Named function so it's not fired twice on click.
   const handleOnTableClick = useCallback(() => {
     onClick(id)
   }, [id, onClick]);
 
-  useEffect(() => {
-    isInfoWindowOpen && infoWindow?.open(map, marker)
-  }, [isInfoWindowOpen, infoWindow, map, marker])
-  
-  useEffect(() => {
+  const generateNewInfoWindow = useCallback(() => {
+    const newInfoWindow =
+    new google.maps.InfoWindow({ content: ReactDOMServer.renderToString(<InfoWindowContent />) })
+    infoWindow = newInfoWindow
 
-    if(!infoWindow) {
-      const newInfoWindow =
-        new google.maps.InfoWindow({ content: ReactDOMServer.renderToString(<InfoWindowContent />) })
-        setInfoWindow(newInfoWindow);
+    google.maps.event.addListener(newInfoWindow,'closeclick', () => {
+        onWindowClose();
+        newInfoWindow.close()
+    });
+  }, [infoWindow, InfoWindowContent, onWindowClose, options, map, marker])
+
+  useEffect(() => {
+    console.log('infoWindow', infoWindow)
+    isInfoWindowOpen && infoWindow?.open(map, marker)
+  }, [isInfoWindowOpen, infoWindow, map, marker]);
+
+  useEffect(() => {
   
-      google.maps.event
-        .addListener(newInfoWindow,'closeclick', () => {
-          onWindowClose();
-          newInfoWindow.close()
-      });
-    }
+    // if(!infoWindow) {
+    generateNewInfoWindow();
+    // }
 
     return () => {
       if(infoWindow) {
         infoWindow.close()
       }
     };
-  }, [infoWindow, InfoWindowContent, onWindowClose])
+  }, [document, infoWindow, InfoWindowContent, onWindowClose, options.id])
 
   setTimeout(() => {
     // @TODO: Native google.maps.event.addListener(newInfoWindow, 'click', () => { });
@@ -59,7 +63,7 @@ const InfoWindow: FunctionComponent<InfoWindowProps> = (options) => {
     document
       .getElementById(id)
       ?.addEventListener('click', handleOnTableClick);
-  })
+    })
 
   return null;
 }

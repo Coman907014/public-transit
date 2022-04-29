@@ -12,6 +12,7 @@ npm run cypress - To be added - Runs Cypress integration tests
 ### Apart from this list, search for @TODO in project for improvements/todos
 Axios setup & API connection - DONE
 Basic Theme for the styled-components - DONE
+Layout Component should be created. Right now, each component sets its own width and left-right margin/padding.
 Cypress setup & test coverage
 Accessibility - Double check aria labels, make sure content is navigable using keyboard.
 Translation service to be implemented

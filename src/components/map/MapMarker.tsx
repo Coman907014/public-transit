@@ -3,9 +3,10 @@ import InfoWindow from "./InfoWindow/InfoWindow";
 
 export interface MapMarkerProps extends google.maps.MarkerOptions {
   id: string;
-  onClick: (pinId: string) => void;
   name: string;
+  markerOptions: google.maps.MarkerOptions;
   iconName: "train" | "bus" | "tram";
+  onClick: (pinId: string) => void;
 }
 
 const MapMarker: FunctionComponent<MapMarkerProps> = (options) => {
@@ -25,7 +26,7 @@ const MapMarker: FunctionComponent<MapMarkerProps> = (options) => {
       }
 
     };
-  }, [marker])
+  }, [options, marker])
 
   useEffect(() => {
     if (marker) {

@@ -11,7 +11,7 @@ const stationsApi = {
       .get(`/locations?query=${city}`)
       .then(response =>  response.data as StationsList)
   },
-  getAllByCoordinates(x: number, y: number): Promise<any> {
+  getAllByCoordinates(x: string, y: string): Promise<StationsList> {
     return httpClient
       .get(`/locations?x=${x}&y=${y}`)
       .then(response => response.data as StationsList)
