@@ -57,14 +57,15 @@ const Map: FunctionComponent<MapProps> = ({ zoom = 13, center = KappeliStation, 
       <div ref={ref} id="map" />
       {
         markers.length > 0 &&
-        markers.map((markerOptions, index) => (
+        markers.map((markerOptions, index) => {
+          return (
           <MapMarker
             key={ index }
             map={ map }
             onClick={ handleOnClick }
             { ...markerOptions }
           />
-        ))
+        )})
       }
     </>
   );

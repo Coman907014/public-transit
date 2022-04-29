@@ -4,66 +4,94 @@ import InfoContainer from "../InfoContainer/InfoContainer";
 import { MapMarkerProps } from "../MapMarker";
 
 interface InfoWindowProps extends MapMarkerProps {
-  isInfoWindowOpen: boolean;
-  onWindowClose: () => void;
   marker: any;
 };
 
-var infoWindow: google.maps.InfoWindow | undefined = undefined;
+var infoWindowObj: any = {};
+var infoWindowOpenObj: any = {};
+
 const InfoWindow: FunctionComponent<InfoWindowProps> = (options) => {
-  const { isInfoWindowOpen, id, onClick, iconName, name, marker, map, onWindowClose } = options;
-  // const [infoWindow, setInfoWindow] = useState<google.maps.InfoWindow>();
-  const InfoWindowContent = useCallback(() => (
+  const { id, onClick, iconName, name, marker, map } = options;
+
+  const InfoWindowContent = () => (
     <InfoContainer
       id={ id }
       onClick={ onClick }
       icon={ iconName || 'bus' }
       name={ name } />
-  ), [options])
+  )
 
   // @TODO: Named function so it's not fired twice on click.
   const handleOnTableClick = useCallback(() => {
     onClick(id)
   }, [id, onClick]);
 
-  const generateNewInfoWindow = useCallback(() => {
-    const newInfoWindow =
-    new google.maps.InfoWindow({ content: ReactDOMServer.renderToString(<InfoWindowContent />) })
-    infoWindow = newInfoWindow
+  const handleOnMarkerClick = () => {
 
-    google.maps.event.addListener(newInfoWindow,'closeclick', () => {
-        onWindowClose();
-        newInfoWindow.close()
-    });
-  }, [infoWindow, InfoWindowContent, onWindowClose, options, map, marker])
+    infoWindowObj[id].open(map, marker)
+    Object.keys(infoWindowObj).forEach(key => {
+      if(key !== id) {
+        infoWindowOpenObj[key] = false;
+        infoWindowObj[key]?.close();
+      }
+    })
+    
+    infoWindowOpenObj[id] = true
+    infoWindowObj[id]?.open(map, marker)
+    setTimeout(() => {
+      // @TODO: Native google.maps.event.addListener(newInfoWindow, 'click', () => { });
+      // Does not work for some reason. Should be investigated
+      // Adding a native document listener and pushing it to the back of the stack
+      // to give time to the element to render.
+      document.getElementById(id)?.addEventListener('click', handleOnTableClick);
+    }, 50)
 
-  useEffect(() => {
-    console.log('infoWindow', infoWindow)
-    isInfoWindowOpen && infoWindow?.open(map, marker)
-  }, [isInfoWindowOpen, infoWindow, map, marker]);
+  }
 
-  useEffect(() => {
+  const generateNewInfoWindow = () => {
+    setTimeout((infoObj, infoObjOpen) => {
+
+      const newInfoWindow =
+      new google.maps.InfoWindow({
+        content: ReactDOMServer.renderToString(
+          <InfoContainer
+          id={ id }
+          onClick={ onClick }
+          icon={ iconName || 'bus' }
+          name={ name } />)
+      })
   
-    // if(!infoWindow) {
+      infoObj[id] = newInfoWindow;
+      infoObjOpen[id] = false;
+  
+      google.maps.event.addListener(newInfoWindow, 'closeclick', () => {
+          infoObjOpen[id] = false
+          infoObj[id].close()
+      });
+    }, 1, infoWindowObj, infoWindowOpenObj)
+  }
+
+  useEffect(() => {
+
     generateNewInfoWindow();
-    // }
 
     return () => {
-      if(infoWindow) {
-        infoWindow.close()
+
+      if(infoWindowObj[id]) {
+        infoWindowObj[id].close()
       }
     };
-  }, [document, infoWindow, InfoWindowContent, onWindowClose, options.id])
+  }, [document, infoWindowObj, infoWindowOpenObj, InfoWindowContent, options.id])
 
-  setTimeout(() => {
-    // @TODO: Native google.maps.event.addListener(newInfoWindow, 'click', () => { });
-    // Does not work for some reason. Should be investigated
-    // Adding a native document listener and pushing it to the back of the stack
-    // to give time to the element to render.
-    document
-      .getElementById(id)
-      ?.addEventListener('click', handleOnTableClick);
+    
+  options.marker &&
+  google.maps.event.addListener(options.marker, 'click', handleOnMarkerClick);
+
+  useEffect(() => {
+    Object.keys(infoWindowObj).forEach(key => {
+      infoWindowObj[key]?.close()
     })
+  }, [infoWindowObj])
 
   return null;
 }

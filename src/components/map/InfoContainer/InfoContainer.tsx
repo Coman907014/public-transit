@@ -19,7 +19,6 @@ const IconMapper = {
 
 const InfoContainer: FunctionComponent<InfoContainerProps> = ({ icon, name, id }) => {
   const Icon = IconMapper[icon];
-
   return (
     <>
       <Name>{name}</Name>

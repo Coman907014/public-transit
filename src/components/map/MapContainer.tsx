@@ -42,7 +42,7 @@ const MapContainer: FunctionComponent<MapContainerProps> = ({ mapLocations }) =>
         return <Map markers={markerService.stationToMarkerMapper(mapLocations)} handleOnClick={ handleOnClick }/>;
     }
   }, [mapLocations, handleOnClick]);
-  console.log('stationConnections?.stationboard', stationConnections?.stationboard)
+
   return (
     <>
       <Wrapper apiKey={process.env.REACT_APP_MAPS_API_KEY as string} render={render} />
