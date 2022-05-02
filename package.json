@@ -24,7 +24,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cypress": "set CYPRESS_VERIFY_TIMEOUT=1000000 && cypress open"
   },
   "eslintConfig": {
     "extends": [
@@ -45,6 +46,10 @@
     ]
   },
   "devDependencies": {
-    "@types/google.maps": "^3.48.7"
+    "@cypress/webpack-preprocessor": "^5.11.1",
+    "@types/google.maps": "^3.48.7",
+    "chai-in-viewport": "^1.0.3",
+    "cypress": "^9.6.0",
+    "ts-loader": "^9.3.0"
   }
 }

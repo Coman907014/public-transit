@@ -11,7 +11,7 @@ export const SearchWrapper = styled.div`
   flex-direction: column;
 `
 export const SearchError = styled.div`
-  min- height: 20px;
+  min-height: 20px;
   color: ${p => p.theme.colors.red};
   font-weight: bold;
   text-align: left;

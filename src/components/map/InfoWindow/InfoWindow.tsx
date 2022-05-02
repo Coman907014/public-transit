@@ -1,5 +1,6 @@
-import React, { FunctionComponent, useCallback, useEffect, useState } from "react";
+import { FunctionComponent, useCallback, useEffect } from "react";
 import ReactDOMServer from 'react-dom/server';
+import googleMapsService from "../../../util/googleMapsService";
 import InfoContainer from "../InfoContainer/InfoContainer";
 import { MapMarkerProps } from "../MapMarker";
 
@@ -7,91 +8,82 @@ interface InfoWindowProps extends MapMarkerProps {
   marker: any;
 };
 
-var infoWindowObj: any = {};
-var infoWindowOpenObj: any = {};
+export interface InfoWindowObj {
+  [key: string]: google.maps.InfoWindow
+}
+
+export interface InfoWindowObjState {
+  [key: string]: boolean;
+}
+
+// @TODO: We need this in order to keep track of all infoWindows created
+// Might be able to find a better solution
+var infoWindowObj: InfoWindowObj = {};
+var infoWindowObjState: InfoWindowObjState = {};
 
 const InfoWindow: FunctionComponent<InfoWindowProps> = (options) => {
   const { id, onClick, iconName, name, marker, map } = options;
 
-  const InfoWindowContent = () => (
+  const InfoWindowContent = useCallback(() => (
     <InfoContainer
       id={ id }
       onClick={ onClick }
       icon={ iconName || 'bus' }
       name={ name } />
-  )
+  ), [id, iconName, name, onClick])
 
   // @TODO: Named function so it's not fired twice on click.
   const handleOnTableClick = useCallback(() => {
     onClick(id)
   }, [id, onClick]);
 
-  const handleOnMarkerClick = () => {
+  const handleOnMarkerClick = useCallback(() =>{
 
-    infoWindowObj[id].open(map, marker)
-    Object.keys(infoWindowObj).forEach(key => {
-      if(key !== id) {
-        infoWindowOpenObj[key] = false;
-        infoWindowObj[key]?.close();
-      }
-    })
-    
-    infoWindowOpenObj[id] = true
-    infoWindowObj[id]?.open(map, marker)
+    googleMapsService.closeAllInfoWindows(infoWindowObj, infoWindowObjState, id);
+    googleMapsService.openCurrentInfoWindow(infoWindowObj, infoWindowObjState, id, map, marker);
+
     setTimeout(() => {
       // @TODO: Native google.maps.event.addListener(newInfoWindow, 'click', () => { });
       // Does not work for some reason. Should be investigated
       // Adding a native document listener and pushing it to the back of the stack
       // to give time to the element to render.
       document.getElementById(id)?.addEventListener('click', handleOnTableClick);
-    }, 50)
+    })
 
-  }
+  }, [handleOnTableClick, id, map, marker] )
 
-  const generateNewInfoWindow = () => {
-    setTimeout((infoObj, infoObjOpen) => {
-
+  const generateNewInfoWindow = useCallback(() => {
       const newInfoWindow =
       new google.maps.InfoWindow({
         content: ReactDOMServer.renderToString(
           <InfoContainer
-          id={ id }
-          onClick={ onClick }
-          icon={ iconName || 'bus' }
-          name={ name } />)
+            id={ id }
+            onClick={ onClick }
+            icon={ iconName || 'bus' }
+            name={ name }
+            />)
       })
   
-      infoObj[id] = newInfoWindow;
-      infoObjOpen[id] = false;
-  
-      google.maps.event.addListener(newInfoWindow, 'closeclick', () => {
-          infoObjOpen[id] = false
-          infoObj[id].close()
-      });
-    }, 1, infoWindowObj, infoWindowOpenObj)
-  }
+      infoWindowObj[id] = newInfoWindow;
+      infoWindowObjState[id] = false;
+
+      googleMapsService.listenTo(
+        newInfoWindow,
+        'closeclick', () =>
+        googleMapsService.closeCurrentInfoWindow(infoWindowObj, infoWindowObjState, id));
+
+  } , [iconName, id, name, onClick])
 
   useEffect(() => {
 
     generateNewInfoWindow();
 
-    return () => {
-
-      if(infoWindowObj[id]) {
-        infoWindowObj[id].close()
-      }
-    };
-  }, [document, infoWindowObj, infoWindowOpenObj, InfoWindowContent, options.id])
+    return () => googleMapsService.closeAllInfoWindows(infoWindowObj, infoWindowObjState)
+  }, [InfoWindowContent, options.id, generateNewInfoWindow, id])
 
     
   options.marker &&
-  google.maps.event.addListener(options.marker, 'click', handleOnMarkerClick);
-
-  useEffect(() => {
-    Object.keys(infoWindowObj).forEach(key => {
-      infoWindowObj[key]?.close()
-    })
-  }, [infoWindowObj])
+  googleMapsService.listenTo(options.marker, 'click', handleOnMarkerClick);
 
   return null;
 }

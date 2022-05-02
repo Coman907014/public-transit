@@ -1,6 +1,5 @@
 import { ChangeEvent, FunctionComponent, useCallback, useState } from "react"
 import { Station } from "../../model/Station";
-import stationsService from "../../util/stationsService";
 import SearchInput from "./searchInput/SearchInput";
 
 interface SearchContainerProps {
@@ -30,13 +29,13 @@ const SearchContainer: FunctionComponent<SearchContainerProps> = ({ name, onChan
     return onChange(e.target.value);
   }, [onChange, results, onSelect])
   return (
-        <SearchInput
-          name={ name }
-          error={ searchError }
-          results={ results }
-          onChange={ handleOnChangeValidation }
-          />
-        )
+    <SearchInput
+      name={ name }
+      error={ searchError }
+      results={ results }
+      onChange={ handleOnChangeValidation }
+      />
+    )
 }
 
 export default SearchContainer;

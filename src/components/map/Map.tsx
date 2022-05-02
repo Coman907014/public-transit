@@ -1,4 +1,5 @@
 import { FunctionComponent, useEffect, useRef, useState } from "react";
+import markerService from "../../util/markerService";
 import MapMarker from "./MapMarker";
 
 const KappeliStation = {
@@ -38,16 +39,13 @@ const Map: FunctionComponent<MapProps> = ({ zoom = 13, center = KappeliStation, 
       return;
     }
     
-    const firstViableMarker = markers.find(marker => marker.position.lat && marker.position.lng);
+    const firstViableMarker = markers.find(marker => markerService.hasValidCoordinates({ ...marker.position }));
 
     if (!firstViableMarker) {
       return;
     }
 
     const { lat, lng } = firstViableMarker.position
-    // @TODO: Even though we pass numbers, we have a console error saying that lat is not a number.
-    // InvalidValueError: setPosition: not a LatLng or LatLngLiteral: in property lat: not a number
-    // Should be investigated
     map.panTo({ lat: parseFloat(lat), lng: parseFloat(lng) })
 
   }, [map, markers])
@@ -56,7 +54,7 @@ const Map: FunctionComponent<MapProps> = ({ zoom = 13, center = KappeliStation, 
     <>
       <div ref={ref} id="map" />
       {
-        markers.length > 0 &&
+        markers?.length > 0 &&
         markers.map((markerOptions, index) => {
           return (
           <MapMarker

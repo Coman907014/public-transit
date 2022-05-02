@@ -2,7 +2,7 @@ import { Station } from "../model/Station";
 
 const markerService = {
   stationToMarkerMapper(stations: Station[]) {
-    return stations.map(({ coordinate, id, icon, name }) => ({
+    return stations?.map(({ coordinate, id, icon, name }) => ({
       label: '',
       position: {
         lat: coordinate.x,
@@ -16,8 +16,16 @@ const markerService = {
       iconName: icon,
       clickable: true,
       id,
-      name
+      name,
+      title: `marker:${name}`
     }))
+  },
+  hasValidCoordinates({ lat, lng }: { [key:string]: number }): boolean {
+    if (lat && lng) {
+      return true
+    };
+
+    return false
   }
 }
 

@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import mediaBelow from "../../../theme/utils/mediaBelow/mediaBelow";
 
 export const ShowTable = styled.div`
 // @TODO: For some reason we can't add color from theme here
@@ -18,6 +19,13 @@ export const InfoContainerWrapper = styled.div`
   svg {
     width: 40%;
   }
+
+  ${ mediaBelow.mobileLarge(
+    css`
+    flex-direction: column;
+    width: auto;
+    `
+  ) }
 `
 
 export const Name = styled.div``

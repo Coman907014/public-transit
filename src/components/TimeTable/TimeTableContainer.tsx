@@ -11,7 +11,7 @@ interface TimeTableContainerProps extends BackdropProps {
 
 const TimeTableContainer: FunctionComponent<TimeTableContainerProps> = (props) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [pageLength, setPageLength] = useState<number>(15);
+  const [pageLength, setPageLength] = useState<number>(10);
 
   const currentTableBody:  MapForTable[] | undefined =
   stationsService.getStationsForCurrentPage(props.tableBody, pageLength, currentPage);
@@ -52,17 +52,22 @@ const TimeTableContainer: FunctionComponent<TimeTableContainerProps> = (props) =
 
   return (
     <Backdrop {...props}>
-      <Table headers={[' ', 'Departure', 'Destination']} body={ currentTableBody }/>
-      <Pagination
-        currentPage={ currentPage }
-        pageSize={ pageLength }
-        possiblePageSizes={ [5, 10, 15, 20] }
-        firstElementIndex={ (currentPage - 1) * pageLength }
-        lastElementIndex={ getLastElementIndex }
-        totalElements={ props.tableBody?.length || 0 }
-        handlePageChange={ handlePageChange }
-        handlePageLengthChange={ handlePageLengthChange }
-      />
+      <div>
+        <Table headers={[' ', 'Departure', 'Destination']} body={ currentTableBody }/>
+      </div>
+      { 
+        Array.isArray(currentTableBody) && currentTableBody.length > 0 &&
+        <Pagination
+          currentPage={ currentPage }
+          pageSize={ pageLength }
+          possiblePageSizes={ [5, 10] }
+          firstElementIndex={ (currentPage - 1) * pageLength }
+          lastElementIndex={ getLastElementIndex }
+          totalElements={ props.tableBody?.length || 0 }
+          handlePageChange={ handlePageChange }
+          handlePageLengthChange={ handlePageLengthChange }
+        />
+      }
     </Backdrop>
   )
 }

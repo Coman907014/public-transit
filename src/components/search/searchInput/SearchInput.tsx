@@ -18,6 +18,7 @@ const SearchInput: FunctionComponent<SearchInputProps> = ({ name, error, results
           name={ name }
           onChange={ onChange }
           list={ name }
+          data-test={`input:SearchInput:${name.split(' ').join('-')}`}
         />
         {
           results &&
@@ -25,15 +26,18 @@ const SearchInput: FunctionComponent<SearchInputProps> = ({ name, error, results
           <ResultList id={ name }>
             { results.map((data: Station) => (
                 <Result
+                  data-test={`dropDownOptions:SearchInput:${data.name.split(' ').join('-')}`}
                   key={ data.name }
-                  value={  data.name  }>
-                    {  data.name  }
+                  value={ data.name }>
+                    { data.name }
                   </Result>
               ))  }
           </ResultList>
         }
 
-        <SearchError aria-labelledby={ `Input ${name} error` }>
+        <SearchError
+          aria-labelledby={ `Input ${name} error` }
+          data-test={`error:SearchInput:${name.split(' ').join('-')}`}>
           { error && error }
         </SearchError>
     </SearchWrapper>

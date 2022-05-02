@@ -1,0 +1,22 @@
+{
+  "baseUrl": "https://google.com?check-for-actual-url-in-plugins.js",
+  "defaultCommandTimeout": 15000,
+  "requestTimeout": 10000,
+  "taskTimeout": 50000,
+  "pageLoadTimeout": 50000,
+  "pluginsFile": "./test/cypress/plugins.js",
+  "supportFile": "./test/cypress/support.js",
+  "fileServerFolder": "./",
+  "integrationFolder": "./test/cypress/integration",
+  "testFiles": "**/*.spec.ts",
+  "fixturesFolder": "./test/cypress/fixtures/",
+  "videosFolder": "./test/cypress/videos",
+  "screenshotsFolder": "./test/cypress/screenshots",
+  "trashAssetsBeforeRuns": true,
+  "chromeWebSecurity": false,
+  "watchForFileChanges": false,
+  "retries": {
+    "runMode": 2,
+    "openMode": 0
+  }
+}

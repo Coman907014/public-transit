@@ -1,4 +1,5 @@
-import { FunctionComponent, useCallback, useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
+import markerService from "../../util/markerService";
 import InfoWindow from "./InfoWindow/InfoWindow";
 
 export interface MapMarkerProps extends google.maps.MarkerOptions {
@@ -26,7 +27,7 @@ const MapMarker: FunctionComponent<MapMarkerProps> = (options) => {
   }, [options, marker])
 
   useEffect(() => {
-    if (marker) {
+    if (marker && markerService.hasValidCoordinates({ ...options.position })) {
       marker.setOptions(options);
     }
 

@@ -21,17 +21,17 @@ const Backdrop: FunctionComponent<BackdropProps> = ({
 }) => {
 
   return (
-    <BackdropWrapper shouldShow={ shouldShow }>
-      <CloseIconWrapper>
+    <BackdropWrapper shouldShow={ shouldShow } data-test="container:backdrop">
+      <CloseIconWrapper data-test="icon:backdrop:close">
         <Close onClick={ handleBackdropClose } />
       </CloseIconWrapper>
-      <Title>
+      <Title data-test={`title:backdrop`}>
         { title }
       </Title>
-      <Subtitle1>
+      <Subtitle1 data-test={`subtitle1:backdrop`}>
         { subtitle1 }
       </Subtitle1>
-      <Subtitle2>
+      <Subtitle2 data-test={`subtitle2:backdrop`}>
         { subtitle2 }
       </Subtitle2>
       { children }

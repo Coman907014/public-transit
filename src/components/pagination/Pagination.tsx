@@ -1,6 +1,14 @@
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { PageChangeTypes } from "../../enum/PageChangeTypes";
-import { PaginationWrapper, Select, Option, ArrowRight, ArrowLeft, ArrowWrapper, ElementsCount } from "./styles";
+import {
+  PaginationWrapper,
+  Select,
+  Option,
+  ArrowRight,
+  ArrowLeft,
+  ArrowWrapper,
+  ElementsCount,
+  Title } from "./styles";
 
 interface PaginationProps {
   currentPage: number;
@@ -28,27 +36,30 @@ const Pagination: FunctionComponent<PaginationProps> = ({
   Math.ceil(totalElements ? totalElements / pageSize : 0) <= currentPage;
 
   return (
-    <PaginationWrapper>
-      Rows per page:
-      <Select value={ pageSize } onChange={ (e) => handlePageLengthChange(+e.target.value) }>
+    <PaginationWrapper data-test="container:pagination">
+      <Title data-test="text:pagination:title">Rows per page:</Title>
+      <Select
+        data-test="select:pagination:pageSize"
+        value={ pageSize }
+        onChange={ (e) => handlePageLengthChange(+e.target.value) }>
         {
           possiblePageSizes.map(size => <Option key={ size }>{ size }</Option>)
         }
       </Select>
-      <ElementsCount>
+      <ElementsCount data-test="text:pagination:elementsCount">
         { firstElementIndex + 1 } - { lastElementIndex } of { totalElements }
       </ElementsCount>
-      <ArrowWrapper>
+      <ArrowWrapper data-test="icon:pagination:rightArrow">
       {
         !isFirstPage &&
-          <ArrowLeft onClick={ () => handlePageChange(PageChangeTypes.DECREASE)}/>
+          <ArrowLeft onClick={ () => handlePageChange(PageChangeTypes.DECREASE)} />
       }
       </ArrowWrapper>
 
-      <ArrowWrapper>
+      <ArrowWrapper data-test="icon:pagination:rightArrow">
       {
         !isLastPage &&
-          <ArrowRight onClick={ () => handlePageChange(PageChangeTypes.INCREASE)}/>
+          <ArrowRight onClick={ () => handlePageChange(PageChangeTypes.INCREASE)} />
       }
       </ArrowWrapper>
 

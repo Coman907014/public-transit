@@ -21,11 +21,11 @@ const InfoContainer: FunctionComponent<InfoContainerProps> = ({ icon, name, id }
   const Icon = IconMapper[icon];
   return (
     <>
-      <Name>{name}</Name>
+      <Name data-test={`title:infoContainer:${name}`}>{name}</Name>
       <InfoContainerWrapper>
         {Icon && <Icon />}
         <TextWrapper>
-          <ShowTable id={id}>show Timetable</ShowTable>
+          <ShowTable id={id} data-test={`cta:infoContainer:${name}`}>show Timetable</ShowTable>
         </TextWrapper>
       </InfoContainerWrapper>
     </>
