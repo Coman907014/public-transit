@@ -17,7 +17,7 @@ describe('Public Transit - General Layout', () => {
     
     cy.get('[id="map"]').should('exist');
 
-    cy.fixture(`byCityZurich.json`).then((data) => {
+    cy.fixture(`locationsZurich.json`).then((data) => {
       data.stations.forEach(({ name }) => cy.get(`[title="marker:${name}"`).should('exist'));
     })
 
