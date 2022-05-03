@@ -27,7 +27,9 @@ const SearchContainer: FunctionComponent<SearchContainerProps> = ({ name, onChan
 
     setSearchError(undefined);
     return onChange(e.target.value);
-  }, [onChange, results, onSelect])
+
+  }, [onChange, results, onSelect]);
+
   return (
     <SearchInput
       name={ name }

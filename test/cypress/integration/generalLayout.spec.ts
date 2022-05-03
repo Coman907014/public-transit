@@ -80,12 +80,10 @@ describe('Public Transit - General Layout', () => {
 
   })
 
-
-  it('Should validate search input', () => {
+  it('Should validate search input and do the search', () => {
     
-
     cy.get('[data-test="input:SearchInput:Location-Search"]')
-      .type('ba');
+      .type('Ba');
 
     cy.get('[data-test="error:SearchInput:Location-Search"]')
       .should('contain', 'Please, add at least three letters');
@@ -97,8 +95,11 @@ describe('Public Transit - General Layout', () => {
 
     cy.get('[data-test="error:SearchInput:Location-Search"]')
       .should('not.contain', 'Please, add at least three letters');
-
-    mocks.getLocationsByCoordinates('47.547412', '7.589577', 'basel')
+    
+    mocks.getLocationsByCoordinates('47.547412', '7.589577', 'basel');
+    
+    cy.get('[title="marker:Basel, Bhfeingang Gundeldingen"]')
+      .should('exist');
 
     })
 })
